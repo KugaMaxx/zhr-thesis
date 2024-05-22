@@ -131,11 +131,11 @@ SVM接收的数据是由第四章中提取的的火焰静态和动态特征所�
 计算出由第一个11ms到第三个11ms，事件图像形心的移动距离，由于取样间隔自始至终一致，该数值可以一定程度上反映形心的位移速度（位移与微小时间间隔取比值），从而反应
 运动特性。该项特征可以较好区分外界规则运动干扰源（如移动发光体，行人等）。
 
-其余我们在第四章中还介绍了很多特征，未能选用都是处于效果或效率考虑，例如火焰的频闪特性区分效果极差，高阶矩的计算较为繁琐。
+其余我们在第四章中还介绍了很多特征，未能选用都是出于效果或效率考虑，例如火焰的频闪特性区分效果极差，高阶矩的计算较为繁琐。
 \subsection{样本训练}
 我们将数据集划的事件帧序列，按照上述的制作方法，每一帧都转化为一条七维的FIRE向量，我们根据之前标定的数据集
-标签（有无火焰），将这些向量分为正样本（有火）和负样本（无火）。划分完毕后，为了使训练模型的效果最佳，我们后面后续训练
-正样本和负样本数量大致保持1：1的比例。
+标签（有无火焰），将这些向量分为正样本（有火）和负样本（无火）。划分完毕后，为了使训练模型的效果最佳，我们后面后续实验中训练集和测试集
+正样本和负样本数量均大致保持1：1的比例，其中每次实验约600组数据作为训练集，随机抽取4000组作为测试集。
 \subsection{核函数的确定}
 对于SVM的模型训练来讲，核函数的选择至关重要，它可以将原始数据通过非线性映射转换为更高维度的特征空间，从而在该空间中实现线性分离，直接关系到模型的效果等各个方面。
 SVM常见的核函数有线性核，多项式核，高斯核（RBF），sigmoid核，根据其适用场景和效果，本次工作我们主要涉及使用到线性核linear和高斯核rbf。
@@ -163,9 +163,9 @@ SVM常见的核函数有线性核，多项式核，高斯核（RBF），sigmoid�
 高斯核函数在特征空间中给予较高权重的区域主要集中在样本附近，因此能够更好地捕捉局部特征。
 但是需要注意的是，它的计算复杂度较高，特别是在高维空间中。
 
-我们使用多个不同的干扰源视频，都加入同样的火焰场景，建立一个简单的测试集，对两种核的分类效果进行了一个简单的初步对比，记录如下：
+我们使用多个不同的干扰源视频，都加入同样的火焰场景，建立一个简单的测试集，对两种核的分类效果进行了一个简单的初步对比，记录如下：多次实验求平均后，linear核的的平均精度在70\%左右，而高斯核(rbf)的平均精度高出linear核约十个百分点，可达到80\%左右；此外，linear核的训练时间远远超过高斯核，速度相差达到三个数量级以上。
 
-令人惊奇的是，在本次工作中处理二分类火焰识别问题上，linear目前呈现的效果要明显优于rbf,后面更详细的的实验结果也将佐证这一点。
+可见，在本次工作中处理二分类火焰识别问题上，rbf核目前呈现的效果要明显优于linear核,后面更详细的的实验结果也将佐证这一点。
 \section{检测结果}
 对SVM训练的火焰检测算法模型进行测试和评估，我们将从检测精度，可视化，检测速度三方面进行展示。
 \subsection{检测精度}
@@ -194,9 +194,311 @@ SVM常见的核函数有线性核，多项式核，高斯核（RBF），sigmoid�
 
 4.平均精度均值（mAP）：mAP是一种综合评价指标，用于评估检测器在不同类别上的检测性能。它计算每个类别的平均精度（AP），并对所有类别的AP取平均值。
 
+这里，我们将展示linear和rbf两种不同的核的检测精度对比，包括mAP与recall，其中每项指标参数均为三次测试的平均值，且数据为去噪后数据。我们划分了8种情况进行对比：七个FIRE向量全部使用以及七个FIRE向量依次不使用，这样设置的目的一方面可以进行多次的两种核的横向对比，另一方面也可以进行纵向的各向量间接对比，同时这种方式下的情况数较为合适，避免过多排列组合情况造成对比的繁琐复杂。
+
+展示如表\ref{linear},\ref{rbf}。
+\begin{table}[ht]
+    \centering
+    \caption{linear核各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&平均精度均值mAP(\%)&召回率recall(\%)\\
+        \midrule
+        无事件输出率&77.2&49.4\\
+        无长宽比&73.1&47.0\\
+        无圆形度&71.1&45.3\\
+        无矩形度&71.8&45.4\\
+        无尖角数&67.6&42.6\\
+        无形心移动&71.0&45.2\\
+        无面积生长系数&70.9&45.2\\
+        所有FIRE向量&71.9&45.6\\
+        \bottomrule
+    \end{tabularx}
+    \label{linear}
+\end{table}
+
+
+
+
+
+\begin{table}[ht]
+    \centering
+    \caption{高斯核各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&平均精度均值mAP(\%)&召回率recall(\%)\\
+        \midrule
+        无事件输出率&77.7&50.1\\
+        无长宽比&80.6&52.0\\
+        无圆形度&80.6&52.0\\
+        无矩形度&80.6&52.0\\
+        无尖角数&78.9&51.1\\
+        无形心移动&80.6&52.0\\
+        无面积生长系数&80.5&51.9\\
+        所有FIRE向量&80.6&52.0\\
+        \bottomrule
+    \end{tabularx}
+    \label{rbf}
+\end{table}
+
+可以看到各种情况下，无论是mAP还是Recall，高斯核均明显优于linear核，所以本次工作中，高斯核是我们的最优核选择。
+
+接下来我们将展示噪声对本次模型精确度的影响情况，统一选择最优的rbf核，同样设置8种情况，对去噪前后的平均精度均值mAP和召回率Recall进行统计对比。
+
+展示如表\ref{噪前},\ref{噪后}。
+\begin{table}[ht]
+    \centering
+    \caption{去噪前各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&平均精度均值mAP(\%)&召回率recall(\%)\\
+        \midrule
+        无事件输出率&60.6&43.4\\
+        无长宽比&62.2&44.3\\
+        无圆形度&62.2&44.3\\
+        无矩形度&62.2&44.3\\
+        无尖角数&61.4&44.0\\
+        无形心移动&62.2&44.3\\
+        无面积生长系数&62.1&44.3\\
+        所有FIRE向量&62.2&44.3\\
+        \bottomrule
+    \end{tabularx}
+    \label{噪前}
+\end{table}
+
+
+\begin{table}[ht]
+    \centering
+    \caption{去噪后各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&平均精度均值mAP(\%)&召回率recall(\%)\\
+        \midrule
+        无事件输出率&77.7&50.1\\
+        无长宽比&80.6&52.0\\
+        无圆形度&80.6&52.0\\
+        无矩形度&80.6&52.0\\
+        无尖角数&78.9&51.1\\
+        无形心移动&80.6&52.0\\
+        无面积生长系数&80.5&51.9\\
+        所有FIRE向量&80.6&52.0\\
+        \bottomrule
+    \end{tabularx}
+    \label{噪后}
+\end{table}
+
+可以看到，原始噪声对火焰检测识别模型精确度的影响还是较大的，对原始数据进行去噪可以有效提高约20\%的平均精度，对于模型效果的优化来讲至关重要。
 
 \subsection{可视化}
+这里，我们将以最直观的方式对模型的效果进行展示。
+
+对于我们训练的模型来讲，最理想的效果便是对火焰进行正确识别分类,如图\ref{20}所示，(a)和(b)分别是对火焰和非火焰的正确分类。其中红色表示目标框，代表着人工标定的真实的结果与标签，蓝色表示预测框，代表我们训练的模型的预测结果。重合度，即计算的IOU越大，代表着我们的这次预测结果越加准确。
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance1.png}
+        \caption{火焰识别}
+        \label{20.a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance8.png}
+        \caption{非火焰识别}
+        \label{20.b}
+    \end{subfigure}
+    \caption{正确识别}
+    \label{20}
+\end{figure}
+训练的火焰识别模型会出现两类问题，第一类便是将火焰识别成非火焰，从而漏识，如图\ref{21}，(a)和(b)分别将火焰错视为行人和夜间的灯光。
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance3.png}
+        \caption{错误漏识1}
+        \label{21.a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance7.png}
+        \caption{错误漏识2}
+        \label{21.b}
+    \end{subfigure}
+    \caption{漏识}
+    \label{21}
+\end{figure}
+
+漏识情况对于rbf核来讲，出现情况较少，而由于其简单线性结构，linear核相对较多，也是其与高斯核准确度差距的主要所在。我们利用4000组数据对两种核进行了分别测试，高斯核仅仅出现了两例漏识情况，而linear核的漏识会达到200+例。
+
+第二类问题便是将非火焰识别为火焰，从而错误预警，这一问题较为普遍，无论是哪种核函数都相差不大，如图\ref{22}所示，(a)与(b)分别是将运动的行人和夜间的灯光错识别为了火焰。
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance4.png}
+        \caption{错误预警1}
+        \label{22.a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/jiance5.png}
+        \caption{错误预警2}
+        \label{22.b}
+    \end{subfigure}
+    \caption{被干扰错误预警}
+    \label{22}
+\end{figure}
+
+同时该问题会被外界噪声放大，从可视化来看，外界噪声数据会与一些干扰源相连接，从而形成更加与火焰相似的事件团集合，从而更容易被错误预警，而漏识问题反而受噪声影响不大，甚至还会减弱。如图\ref{23}所示，肉眼可见行人的周围事件数据变多，从而被错误预警。
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/zaosheng3.png}
+        \caption{示例1}
+        \label{23.a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/zaosheng4.png}
+        \caption{示例2}
+        \label{23.b}
+    \end{subfigure}
+    \caption{噪声放大错误预警问题}
+    \label{23}
+\end{figure}
+
+此外噪声还会对正确识别结果产生干扰，由于噪声的存在可能与火焰事件产生连通，从而会使我们模型的预测火焰范围与真实情况相比偏大，这将会影响我们模型的IOU值，从而影响我们根据IOU阈值进行计算的mAP。如果噪声过多，火焰的具体位置也会被剧烈影响。如图\ref{24}所示，(a)即为受噪声影响，预测框偏大的情况，(b)则是更严重的情况，火焰的具体位置被噪声严重干扰。从这一直观角度，去噪对模型效果影响极大。
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/zaoshen1.png}
+        \caption{噪声干扰1}
+        \label{24.a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/zaosheng2.png}
+        \caption{噪声干扰2}
+        \label{24.b}
+    \end{subfigure}
+    \caption{噪声干扰}
+    \label{24}
+\end{figure}
+
+
 \subsection{检测速度}
+在前面两部分，我们展示评估了训练的火焰识别模型的准确度等效果方面，然而，效果只是效率的一部分，速率对于模型工作来讲同样重要。这一部分，我们将对该模型的速率进行评估与对比。评估将包括两个指标，训练集的构建时间和模型的训练时间。同样的，我们参照之前，仍然设置8种情况，构建时间和训练时间均是取三次实验的均值。
+
+linear核和高斯核的时间效率情况（数据采用去噪后）统计如表\ref{t_linear},\ref{t_rbf}。
+\begin{table}[ht]
+    \centering
+    \caption{linear核各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&训练集构建时间(s)&火焰检测模型训练时间(s)\\
+        \midrule
+        无事件输出率&3.62&170.0\\
+        无长宽比&3.65&96.2\\
+        无圆形度&3.66&51.0\\
+        无矩形度&3.66&61.4\\
+        无尖角数&3.71&71.2\\
+        无形心移动&3.68&73.0\\
+        无面积生长系数&3.55&22.0\\
+        所有FIRE向量&3.73&69.1\\
+        \bottomrule
+    \end{tabularx}
+    \label{t_linear}
+\end{table}
+
+
+
+\begin{table}[ht]
+    \centering
+    \caption{rbf核各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&训练集构建时间(s)&火焰检测模型训练时间(s)\\
+        \midrule
+        无事件输出率&3.62&0.04\\
+        无长宽比&3.63&0.06\\
+        无圆形度&3.66&0.06\\
+        无矩形度&3.63&0.04\\
+        无尖角数&3.71&0.04\\
+        无形心移动&3.69&0.04\\
+        无面积生长系数&3.57&0.06\\
+        所有FIRE向量&3.73&0.04\\
+        \bottomrule
+    \end{tabularx}
+    \label{t_rbf}
+\end{table}
+
+由对比可见，由于训练集的构建过程并无差别，两种核的该时间参数几乎保持一致；然而，在训练数据集的所用时间方面，高斯核的速率上与linear有着三个数量级的差距，结合前面的精确度差距，可以说rbf核基本在各方面效率优于linear核。
+
+设置相同的情况，去噪前后的时间速率情况（统一使用rbf核）展示如表\ref{t_噪前},\ref{t_噪后}。
+\begin{table}[ht]
+    \centering
+    \caption{去噪前各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&训练集构建时间(s)&火焰检测模型训练时间(s)\\
+        \midrule
+        无事件输出率&7.63&0.06\\
+        无长宽比&7.85&0.04\\
+        无圆形度&8.49&0.04\\
+        无矩形度&8.22&0.06\\
+        无尖角数&8.40&0.06\\
+        无形心移动&8.38&0.06\\
+        无面积生长系数&7.60&0.06\\
+        所有FIRE向量&8.65&0.04\\
+        \bottomrule
+    \end{tabularx}
+    \label{t_噪前}
+\end{table}
+
+
+
+由对比可见，由于rbf核模型的训练速率较快，去噪前后的训练时间并无过大变化，属于正常波动变化；而训练集的构建时间约有一倍左右的差距，说明噪声的数据量约与事件数据相近，去噪工作可以减少近一半的运算量，结合前面的对比工作，再次表明去噪对本模型优化的重要性。
+\begin{table}[ht]
+    \centering
+    \caption{去噪后各情况统计}
+    \begin{tabularx}{0.7\textwidth}{c|X|X}
+        \toprule
+        情况&训练集构建时间(s)&火焰检测模型训练时间(s)\\
+        \midrule
+        无事件输出率&3.62&0.04\\
+        无长宽比&3.63&0.06\\
+        无圆形度&3.66&0.06\\
+        无矩形度&3.63&0.04\\
+        无尖角数&3.71&0.04\\
+        无形心移动&3.69&0.04\\
+        无面积生长系数&3.57&0.06\\
+        所有FIRE向量&3.73&0.04\\
+        \bottomrule
+    \end{tabularx}
+    \label{t_噪后}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{本章小结}
 本章是本次工作的核心内容，在本章中我们介绍了基于我们的数据集以及其他前期工作，采用机器学习的思路，
