@@ -6,70 +6,25 @@
 }
 
 \begin{abstract}
-  事件相机是一种新型的，模拟生物视网膜原理的视觉传感设备，以完全不同于标准相机的方式工作，基于
-  事件驱动的方式来捕捉场景中的动态变化。相对于传统相机的每一帧图像，事件相机只会记录下物体的运
-  动变化信息，这一特点赋予了它在很多高速，高变化频率场景下的优秀信息处理能力，可以广泛应用到多
-  个研究领域中。
+  事件相机是一种新型的、模拟生物视网膜原理的视觉传感设备，以完全不同于标准相机的方式工作，基于事件驱动的方式来捕捉场景中的动态变化。相对于传统相机的每一帧图像，事件相机只会记录下物体的运动变化信息，这一特点赋予了它在很多高速、高变化频率场景下的优秀信息处理能力，可以广泛应用到多个研究领域中。火焰检测是一个十分契合事件相机工作特点的场景，理想情况下可以通过事件相机实现对火焰全天候的监控，并利用其独特的特性排除无关背景噪音干扰，提高大幅火焰检测效率。事件相机在火灾领域的应用刚刚起步。
 
-  火焰检测工作，这一已经被国内外学者研究了数十年的领域，无疑看起来是一个十分契合事件相机工作特
-  点的场景，理想情况下，我们可以通过事件相机实现对火焰全天候的监控，并利用其独特的特性排除无关
-  背景噪音干扰而提高大幅火焰检测效率。然而，目前尚未有对利用事件相机进行火焰检测的研究展开讨论，
-  事件相机在火灾领域的应用暂时还处于一片空白。在这种情况下，如何应用
-  事件相机准确而迅速地提取相关火焰特征，并基于此探索该装置在火焰检测研究工作中的可行性，是一项有重要意
-  义的研究课题。本工作旨在利用事件相机拍摄构建一定规模的火焰数据集，并在对火焰数据集的静态和动态特征提取和分析工作的基
-  础上，利用机器学习等多种方法思路，对基于事件相机的火焰检测算法进行一定深度的研究，并建立起初
-  步的，较完整的检测算法框架，探讨事件相机在火灾检测领域的可行性与应用价值。
+  本文旨在探讨事件相机在火灾检测领域的可行性与应用价值，建立起较为完整的检测算法框架。首先，使用事件相机对多种不同材质的木垛火进行多角度拍摄，同时拍摄一定数量的无火焰场景作为对照，构建了初步的火焰数据集。其次，对火焰数据集中火焰的静态与动态特征进行分析，建立了较完整的事件数据特征提取算法框架。最后，采用机器学习的思路，利用支持向量机训练构建了针对火焰事件的检测算法模型，并将模型的结果进行了可视化展示呈现。
   
-  首先,本次使用型号DAVIS346的事件相机对多种不同材质的木垛火进行了多角度拍摄,同时又通过拍摄一
-  定数量的无火焰场景对其进行了补充，建立起初步的火焰数据集。之后，在建立的数据集基础上，本次工作
-  对火焰检测中常见的火焰静态与动态特征进行了罗列与提取，建立了较完整的事件数据特征提取算法框架，对部分提
-  取的特征进行了进一步的处理与分析。最后，在特征提取工作的基础上，本次工作采用机器学习的思路，利用支持向量机，
-  训练构建了针对火焰事件的检测算法模型，同时利用评价算法对该模型的检测精确率，召回率等客观参数进行了客
-  观的评估，对模型的可视化效果进行展示呈现，从而讨论事件相机在该领域的应用前景。
-
-  基于上述工作，我们最终搭建了基于事件相机的初步火焰检测算法模型，此模型接收一定长度的火焰的事件
-  数据片段，通过提取其中的相关静态与动态特征，经过一系列预处理，最终返回模型的检测结果，即是否存
-  在火焰以及包含火焰的检测框位置坐标。实验表明,该模型能够较好地处理火焰的传统二分类问题，说明基于事件相机的
-  火焰检测是可行的，未来可期。
+  本文最终搭建的基于事件相机的火焰检测算法模型，可接收一定长度的火焰事件数据片段，提取其中的相关静态与动态特征，经过一系列预处理，最终返回模型的检测结果，即是否存在火焰以及包含火焰的检测框位置坐标。利用评价算法对该模型的检测精确率、召回率等参数进行了客观的评估，结果表明该模型能够较好地处理火焰的传统二分类问题。
 \end{abstract}
 
 \begin{abstract*}
-  The event camera, a novel visual sensing device that mimics the principles of the biological
-  retina, operates in a fundamentally different manner from standard cameras. It captures dynamic 
-  changes in a scene using an event-driven approach, distinct from the frame-by-frame imaging of 
-  traditional cameras. Unlike traditional cameras that capture every frame of an image, the event 
-  camera records only the motion and change information of objects in the scene. This characteristic
-  equips it with excellent information processing capabilities, particularly suitable for high-speed 
-  and high-frequency dynamic scenes. Consequently, it finds wide applications across various research domains.
- 
-  The field of flame detection, which has been studied by scholars both domestically and internationally 
-  for decades, undoubtedly appears to be well-suited for the operational principles of event cameras. 
-  Ideally, event cameras could enable round-the-clock monitoring of flames and exploit their unique 
-  characteristics to eliminate irrelevant background noise interference, thereby significantly improving flame 
-  detection efficiency.  However, there has been no discussion on utilizing event cameras for flame detection, 
-  and their application in the field of fire detection remains largely unexplored. In this situation, the rapid 
-  and accurate identification and extraction of various flame characteristics using event cameras, as well as 
-  the exploration of their application value and prospects in fire detection, hold significant research value.
-  This work aims to utilize event cameras to capture and construct a substantial-scale dataset of flames. 
-  Building upon the static and dynamic feature extraction and analysis of the flame dataset, this research 
-  employs various methods, including machine learning, to delve into event camera-based flame detection algorithms.
-  It establishes an initial and relatively comprehensive detection algorithm and explores the feasibility 
-  and application value of event cameras in the field of fire detection.
- 
-  Firstly, the event camera model DAVIS346 was used to capture multi-angle shots of fires of various materials, 
-  supplemented by capturing a certain number of flameless scenes to establish an initial fire dataset. Subsequently, 
-  based on the established dataset, this work listed and extracted common static and dynamic features of flames in 
-  flame detection, establishing a relatively complete framework for event data feature extraction algorithms, and 
-  further processing and analyzing some of the extracted features. Finally, based on the feature extraction work, 
-  this study adopted a machine learning approach, utilizing support vector machines to train and construct a detection 
-  algorithm model for flame events. Objective parameters such as detection accuracy and recall rate of the model were 
-  evaluated using evaluation algorithms, and the visual effects of the model were demonstrated, thus discussing the 
-  application prospects of event cameras in this field.
+  An event camera is a new type of vision sensor that mimics the principles of the biological retina, operating in a manner completely different from standard cameras. Instead of capturing static images frame by frame, it is based on an event-driven approach to record dynamic changes in a scene. Unlike traditional cameras that capture entire frames, event cameras only record changes in the movement of objects. This characteristic endows them with excellent information processing capabilities in many high-speed, high-frequency change scenarios, making them applicable in various research fields.
+  Fire detection is a scenario that perfectly aligns with the working principles of event cameras. Ideally, event cameras can achieve all-weather monitoring of flames and utilize their unique properties to eliminate irrelevant background noise interference, significantly improving fire detection efficiency. The application of event cameras in the field of fire detection is just beginning.
 
-  Based on the aforementioned work, we ultimately developed a preliminary flame detection algorithm model based on event 
-  cameras. This model receives event data segments of certain lengths related to flames, extracts relevant static and 
-  dynamic features from them, undergoes a series of preprocessing steps, and finally returns the detection results of 
-  the model, indicating whether a flame exists and the coordinates of the detection box containing the flame. Experiments 
-  have shown that the model can effectively handle the traditional binary classification problem of flames, demonstrating 
-  the feasibility of flame detection based on event cameras, with promising prospects for the future.
+  This paper aims to explore the feasibility and application value of event cameras in the field of fire detection, establishing a relatively comprehensive detection algorithm framework. Firstly, an event camera was used to capture multi-angle shots of woodpile fires with various materials, while also capturing a certain number of flame-free scenes as controls, thus creating an initial flame dataset. Secondly, the static and dynamic characteristics of flames in the dataset were analyzed, and a comprehensive event data feature extraction algorithm framework was established. Finally, using a machine learning approach, a flame event detection algorithm model was constructed and trained using support vector machines, and the results of the model were visually presented.
+
+  The final flame detection algorithm model based on the event camera, constructed in this paper, can receive flame event data segments of a certain length, extract relevant static and dynamic features, and after a series of preprocessing steps, return the model's detection results. These results indicate whether a flame is present and provide the coordinates of the detection bounding box containing the flame. The evaluation algorithm objectively assessed parameters such as the model's detection accuracy and recall rate. The results indicate that this model can effectively handle the traditional binary classification problem of flame detection.
+
+
+
+
+
+
+
 \end{abstract*}
