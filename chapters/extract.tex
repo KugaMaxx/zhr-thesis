@@ -213,30 +213,27 @@ R：
 其中，$x_n$是离散时间域的信号，$X_k$是信号的离散频率域表示，N是信号的采样点数，j是虚数单位，k是频率的离散值。
 离散时间的傅里叶变换可以将信号从时域转换到频域，得到信号在不同频率上的成分。这些频率成分可以表示信号的频谱特征，包括频率的幅度和相位信息，常用于信号处理中的频谱分析、滤波、特征提取等任务中。
 
-本文通过对数据的事件帧图像面积长序列S(N)进行快速的一维傅里叶变换，变换前后展示效果依次如\ref{8},\ref{9}(前5s)。
-    \begin{figure}[ht]
-      \centering
-      \includegraphics[width=\textwidth]{figures/extract_flicker_01.png}
-      \caption{傅里叶变换前}
-      \label{8}
-    \end{figure}
-    
-    \begin{figure}[ht]
-        \centering
-        \includegraphics[width=\textwidth]{figures/extract_flicker_02.png}
-        \caption{傅里叶变换后}
-        \label{9}
-    \end{figure}
-    
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{figures/extract_flicker_01.png}
+  \caption{傅里叶变换前}
+  \label{8}
+\end{figure}
 
-依据展示可以看到，与目前研究现状吻合，变换前后都是震荡非线性的信号，肉眼难以捕捉到相关的信息，暂时不考虑使用。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figures/extract_flicker_02.png}
+    \caption{傅里叶变换后}
+    \label{9}
+\end{figure}
+
+本文通过对数据的事件帧图像面积长序列S(N)进行快速的一维傅里叶变换，变换前后展示效果依次如\ref{8},\ref{9}(前5s)。依据展示可以看到，与目前研究现状吻合，变换前后都是震荡非线性的信号，肉眼难以捕捉到相关的信息，暂时不考虑使用。
 
 \subsubsection{火焰形心变化}
 火焰的形心变化是指火焰在燃烧过程中形心坐标位置的变化。形心是指火焰区域的质心或重心，对于图像来讲，就是火焰区域所有像素的中心。
 一般来讲，燃烧的前期火焰会发生相对比较大的移动，中后期会趋于平稳，根据火焰的这一特性，工作中可以通过对图像形心移动的相关的分析，
 来排除相关的移动物体干扰源，从而防止对车辆、移动光源等的误报，这是火焰检测算法中一项重要的排除干扰参数指标。
 
-这里本工作可以对每个事件帧的图象像素中心进行统计，展示如\ref{10},\ref{11}(前5s)。
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{figures/extract_centroid_x.png}
@@ -251,7 +248,7 @@ R：
     \label{11}
 \end{figure}
 
-形心坐标的波动情况与实验环境的联系较为紧密，例如当天的风向会影响x方向上的波动，材料的形状结构会影响y方向上的波动，
+这里本工作可以对每个事件帧的图象像素中心进行统计，展示如\ref{10}, \ref{11}(前5s)。形心坐标的波动情况与实验环境的联系较为紧密，例如当天的风向会影响x方向上的波动，材料的形状结构会影响y方向上的波动，
 但是对于同一地点相同实验条件下的火焰来讲，其相对变化基本上遵循火焰特性。
 
 \subsubsection{火焰面积生长系数}
@@ -262,13 +259,6 @@ R：
 
 其中，$\frac{dA}{dt}$是单位时间间隔内火焰面积变化量，A是当前面积。
 
-对于本次工作的事件帧来说，固定每搁33ms进行取样，因此可以通过对比相邻两幅图像的面积，并计算前N幅图像面积的均值，即可获得火焰面积相对连续增长的特征，公式如下：
-\begin{equation} 
-    growth=N\frac{S_{i+1}-S_i}{\sum_{i=0}^{N}S_i}
-\end{equation}
-
-火焰面积生长系数反映了火焰燃烧过程中火焰表面积的增长速度，与火焰的燃烧速率密切相关，随着火灾的发展，燃烧速率增加时，火焰表面积增长的速度也会增加，火焰面积生长系数也会呈现增大的趋势，而火灾发展到中后期，其也会变的相对稳定
-这里本次工作可以对事件帧的生长系数进行统计，效果展示如\ref{12},\ref{13}。
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{figures/extract_area_01.png}
@@ -282,6 +272,14 @@ R：
         \caption{5-10s面积生长系数变化}
         \label{13}
 \end{figure}
+
+对于本次工作的事件帧来说，固定每搁33ms进行取样，因此可以通过对比相邻两幅图像的面积，并计算前N幅图像面积的均值，即可获得火焰面积相对连续增长的特征，公式如下：
+\begin{equation} 
+    growth=N\frac{S_{i+1}-S_i}{\sum_{i=0}^{N}S_i}
+\end{equation}
+
+火焰面积生长系数反映了火焰燃烧过程中火焰表面积的增长速度，与火焰的燃烧速率密切相关，随着火灾的发展，燃烧速率增加时，火焰表面积增长的速度也会增加，火焰面积生长系数也会呈现增大的趋势，而火灾发展到中后期，其也会变的相对稳定
+这里本次工作可以对事件帧的生长系数进行统计，效果展示如\ref{12},\ref{13}。
 
 \section{本章小结}
 本章主要介绍了本次工作中使用事件相机对火焰图像中所呈现出的动态与静态特征进行提取的过程，这些特征是用于区分火焰图象与其他常见干扰源图象的
